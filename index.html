@@ -3,319 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fany...</title>
+<title>Portail Énergie</title>
 
 <style>
 body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-background:black;
-color:white;
-overflow-x:hidden;
+    margin:0;
+    height:100vh;
+    background:radial-gradient(circle at center,#0f2027,#203a43,#2c5364);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial, sans-serif;
+    overflow:hidden;
 }
 
-/* INTRO */
-#intro{
-position:fixed;
-width:100%;
-height:100%;
-background:black;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:22px;
-letter-spacing:2px;
-z-index:20;
-animation:fadeOut 4s forwards;
-animation-delay:3s;
-}
-@keyframes fadeOut{
-to{opacity:0;visibility:hidden;}
+/* PORTAIL */
+#portal{
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:linear-gradient(45deg,#00f5ff,#0066ff);
+    box-shadow:0 0 60px #00f5ff;
+    cursor:pointer;
+    position:relative;
+    animation:pulse 2s infinite;
+    transition:transform 0.4s ease;
 }
 
-/* ETOILES */
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:0;
+#portal:hover{
+    transform:scale(1.15);
 }
 
-.container{
-position:relative;
-z-index:2;
-max-width:800px;
-margin:auto;
-padding:100px 25px;
-text-align:center;
-min-height:100vh;
+/* Animation pulsation */
+@keyframes pulse{
+    0%{box-shadow:0 0 30px #00f5ff;}
+    50%{box-shadow:0 0 80px #00f5ff;}
+    100%{box-shadow:0 0 30px #00f5ff;}
 }
 
-.fany{
-font-size:36px;
-animation:glow 2s infinite alternate;
-}
-@keyframes glow{
-from{text-shadow:0 0 10px white;}
-to{text-shadow:0 0 40px white;}
-}
-
-#typedText{
-white-space:pre-line;
-line-height:1.9;
-color:#ddd;
-font-size:18px;
-margin-bottom:40px;
+/* Onde énergie */
+.energy{
+    position:absolute;
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    border:3px solid #00f5ff;
+    animation:expand 1.5s ease-out forwards;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
 }
 
-button{
-margin:10px;
-padding:12px 28px;
-border-radius:30px;
-border:none;
-cursor:pointer;
-transition:0.3s;
-font-size:15px;
+@keyframes expand{
+    from{
+        transform:translate(-50%,-50%) scale(1);
+        opacity:1;
+    }
+    to{
+        transform:translate(-50%,-50%) scale(4);
+        opacity:0;
+    }
 }
 
-.yes{background:white;color:black;}
-.no{
-background:transparent;
-color:white;
-border:1px solid white;
-position:relative;
-}
-button:hover{transform:scale(1.1);}
-.hidden{display:none;}
-
-.signature{
-margin-top:60px;
-color:#888;
+/* Message */
+#message{
+    position:absolute;
+    bottom:80px;
+    color:white;
+    font-size:24px;
+    letter-spacing:2px;
+    opacity:0;
+    transition:opacity 1s ease;
 }
 
-/* PLUIE */
-.drop{
-position:fixed;
-top:-20px;
-font-size:22px;
-animation:fall linear forwards;
-}
-@keyframes fall{
-to{
-transform:translateY(100vh) rotate(360deg);
-opacity:0;
-}
+/* Particules */
+.particle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    background:#00f5ff;
+    border-radius:50%;
+    animation:float 2s linear forwards;
 }
 
-/* RIDEAUX */
-.curtain{
-position:fixed;
-top:0;
-width:50%;
-height:100%;
-background:linear-gradient(to right,#7b0000,#b30000);
-z-index:100;
-transition:2s;
-}
-.left{left:0;}
-.right{right:0;}
-
-/* EXPLOSION LUMIERE */
-.flash{
-position:fixed;
-width:100%;
-height:100%;
-background:white;
-opacity:0;
-z-index:150;
-transition:0.8s;
+@keyframes float{
+    from{
+        opacity:1;
+        transform:translate(0,0);
+    }
+    to{
+        opacity:0;
+        transform:translate(var(--x),var(--y));
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div id="intro">Parfois, le silence fait grandir...</div>
-
-<canvas id="stars"></canvas>
-
-<div class="container">
-<h1><span class="fany">Fany</span>,</h1>
-<div id="typedText"></div>
-
-<div id="choiceSection" class="hidden">
-<p>On reprend nos causeries… différemment ?</p>
-<button class="yes" onclick="yesChoice()">Oui</button>
-<button class="no" id="noBtn" onmouseover="moveNo()">Non</button>
-</div>
-
-<div class="signature">— Jean de La Croix</div>
-</div>
+<div id="portal"></div>
+<div id="message">PORTAL ACTIVATED</div>
 
 <script>
+const portal = document.getElementById("portal");
+const message = document.getElementById("message");
 
-/* MESSAGE */
-const text=`Le 17 avril 2025.
-Trois jours avant Pâques.
+portal.addEventListener("click", () => {
 
-On parle de renaissance.
-Je me suis dit que certaines histoires
-méritent peut-être aussi
-une seconde respiration.
+    // Onde énergie
+    const wave = document.createElement("div");
+    wave.classList.add("energy");
+    document.body.appendChild(wave);
 
-Je ne t’ai pas recontactée.
-Pas parce que je m’en foutais.
+    setTimeout(()=>{
+        wave.remove();
+    },1500);
 
-Mais parce que j’ai compris
-que tu avais raison.
+    // Message
+    message.style.opacity = "1";
 
-Je n’étais pas concentré.
-Je jouais.
-Je n’étais pas prêt.
+    // Particules
+    for(let i=0;i<20;i++){
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
 
-Aujourd’hui je sais
-ce que je dois faire
-et ce que je ne dois plus faire.
+        const x = (Math.random() - 0.5) * 600 + "px";
+        const y = (Math.random() - 0.5) * 600 + "px";
 
-Et malgré tout…
+        particle.style.setProperty("--x", x);
+        particle.style.setProperty("--y", y);
 
-tes petits caprices me manquent.
+        particle.style.top = "50%";
+        particle.style.left = "50%";
 
-Je ne viens rien forcer.
-Juste voir si on peut
-reprendre nos causeries.
+        document.body.appendChild(particle);
 
-Mieux.
-Plus vrai.
-Plus mature.`;
+        setTimeout(()=>{
+            particle.remove();
+        },2000);
+    }
 
-/* TYPEWRITER */
-let i=0;
-function typeWriter(){
-if(i < text.length){
-document.getElementById("typedText").innerHTML += text.charAt(i);
-i++;
-setTimeout(typeWriter,25);
-}else{
-document.getElementById("choiceSection").classList.remove("hidden");
-}
-}
-setTimeout(typeWriter,3500);
-
-/* ETOILES */
-const canvas=document.getElementById("stars");
-const ctx=canvas.getContext("2d");
-function resize(){
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-}
-resize();
-window.addEventListener("resize",resize);
-
-let stars=[];
-for(let i=0;i<120;i++){
-stars.push({
-x:Math.random()*window.innerWidth,
-y:Math.random()*window.innerHeight,
-r:Math.random()*1.5,
-s:Math.random()*0.5
 });
-}
-
-function draw(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle="white";
-stars.forEach(star=>{
-ctx.beginPath();
-ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
-ctx.fill();
-star.y+=star.s;
-if(star.y>canvas.height)star.y=0;
-});
-requestAnimationFrame(draw);
-}
-draw();
-
-/* NON esquive */
-function moveNo(){
-let btn=document.getElementById("noBtn");
-btn.style.position="absolute";
-btn.style.left=Math.random()*250+"px";
-btn.style.top=Math.random()*150+"px";
-}
-
-/* YES ULTRA EFFECT */
-function yesChoice(){
-
-if(navigator.vibrate){
-navigator.vibrate([200,100,200]);
-}
-
-/* Flash */
-let flash=document.createElement("div");
-flash.className="flash";
-document.body.appendChild(flash);
-setTimeout(()=>flash.style.opacity="1",50);
-setTimeout(()=>flash.style.opacity="0",500);
-
-/* Rideaux */
-let left=document.createElement("div");
-left.className="curtain left";
-let right=document.createElement("div");
-right.className="curtain right";
-document.body.appendChild(left);
-document.body.appendChild(right);
-
-setTimeout(()=>{
-left.style.transform="translateX(-100%)";
-right.style.transform="translateX(100%)";
-},1000);
-
-/* Pluie coeurs + fleurs */
-for(let i=0;i<60;i++){
-let drop=document.createElement("div");
-drop.className="drop";
-drop.innerHTML=Math.random()>0.5?"🌹":"💖";
-drop.style.left=Math.random()*window.innerWidth+"px";
-drop.style.animationDuration=(Math.random()*3+3)+"s";
-document.body.appendChild(drop);
-setTimeout(()=>drop.remove(),6000);
-}
-
-/* Message final */
-setTimeout(()=>{
-document.body.innerHTML=`
-<div style="
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-background:black;
-color:white;
-flex-direction:column;
-text-align:center;
-animation:fadeIn 2s;
-">
-<h1 style="font-size:40px;">Chapitre II</h1>
-<p style="font-size:20px;">Commence maintenant 🤍</p>
-<br>
-<button onclick="window.location.href='https://wa.me/22677461017?text=Chapitre%20II%20commence%20maintenant%20🤍'" 
-style="padding:14px 30px;border-radius:30px;border:none;background:white;color:black;">
-Écrire sur WhatsApp
-</button>
-</div>
-
-<style>
-@keyframes fadeIn{
-from{opacity:0;}
-to{opacity:1;}
-}
-</style>
-`;
-},3000);
-
-}
-
 </script>
 
 </body>
